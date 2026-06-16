@@ -179,7 +179,7 @@ app.post("/produtos", async (req, res) => {
 });
 
 // Atualiza parcialmente um produto
-app.patch("/produto/:id", async (req, res) => {
+app.patch("/produtos/:id", async (req, res) => {
   const { id } = req.params;
   const { nome, preco, categoria } = req.body;
 
@@ -218,7 +218,7 @@ const dataModificacao = new Date();
 });
 
 // Deleta produto
-app.delete("/produto/:id", async (req, res) => {
+app.delete("/produtos/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
