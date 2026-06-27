@@ -5,6 +5,14 @@ interface Pessoa {
   nome: string;
 }
 
+interface Produtos{
+  id:number
+  nome: string
+  categoria: string
+  preco: number
+}
+
+
 type Aba = 'pessoas' | 'produtos';
 
 function App() {
@@ -23,8 +31,10 @@ function App() {
   const [temaEscuro, setTemaEscuro] = useState(false);
 
   // Produtos
-  const [produtos, setProdutos] = useState<Pessoa[]>([]);
-
+  const [produtos, setProdutos] = useState<Produtos[]>([]);
+  
+  const [categoria, setCategoria] = useState('')
+  const [preco, setPreco] = useState('')
 
   useEffect(() => {
     async function carregarPessoas() {
@@ -211,7 +221,7 @@ function App() {
       }
 
       const dados = await resposta.json();
-      setPessoas(dados);
+      setProdutos(dados);
     } catch (e: unknown) {
       if (e instanceof Error) {
         setErro(e.message);
@@ -235,6 +245,8 @@ function App() {
         body: JSON.stringify({
           id: Number(novoId),
           nome: novoNome,
+          categoria,
+          preco:Number(preco)
         }),
       });
 
@@ -457,12 +469,20 @@ function App() {
     cardBody: {
       padding: '20px',
     } as React.CSSProperties,
-
+    
     formGrid: {
       display: 'grid',
       gridTemplateColumns: '120px 1fr auto',
       gap: '10px',
       alignItems: 'end',
+    } as React.CSSProperties,
+
+
+    formGridProdutos: {
+      display: 'grid',
+      gridTemplateColumns: '120px 1fr 200px 150px auto',
+      gap: '10px',
+      alingItems: 'end'
     } as React.CSSProperties,
 
     campo: {
@@ -809,7 +829,7 @@ function App() {
               <div style={estilos.cardHeader}>Cadastrar produtos</div>
 
               <div style={estilos.cardBody}>
-                <div style={estilos.formGrid}>
+                <div style={estilos.formGridProdutos}>
                   <div style={estilos.campo}>
                     <label style={estilos.label}>ID</label>
                     <input
@@ -831,6 +851,30 @@ function App() {
                       placeholder="Digite o nome"
                     />
                   </div>
+
+
+                  <div style={estilos.campo}>
+                    <label style={estilos.label}>Categoria</label>
+                    <input
+                      type="text"
+                      value={categoria}
+                      onChange={(e) => setCategoria(e.target.value)}
+                      style={estilos.input}
+                      placeholder="Digite a categoria"
+                    />
+                  </div>
+
+                  <div style={estilos.campo}>
+                    <label style={estilos.label}>Preço</label>
+                    <input
+                      type="text"
+                      value={preco}
+                      onChange={(e) => setPreco(e.target.value)}
+                      style={estilos.input}
+                      placeholder="Digite a preço"
+                    />
+                  </div>
+
 
                   <button
                     onClick={handleSalvarProduto}
@@ -842,40 +886,6 @@ function App() {
                 </div>
               </div>
             </div>
-
-            <div style={estilos.cardBody}>
-                <div style={estilos.formGrid}>
-                  <div style={estilos.campo}>
-                    <label style={estilos.label}>ID</label>
-                    <input
-                      type="number"
-                      value={novoId}
-                      onChange={(e) => setNovoId(e.target.value)}
-                      style={estilos.input}
-                      placeholder="Ex: 1"
-                    />
-                  </div>
-
-                  <div style={estilos.campo}>
-                    <label style={estilos.label}>Nome</label>
-                    <input
-                      type="text"
-                      value={novoNome}
-                      onChange={(e) => setNovoNome(e.target.value)}
-                      style={estilos.input}
-                      placeholder="Digite o nome"
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleSalvarProduto}
-                    disabled={salvando}
-                    style={estilos.botaoPrimario}
-                  >
-                    {salvando ? 'Salvando...' : 'Salvar'}
-                  </button>
-                </div>
-              </div>
            
             
 
@@ -903,6 +913,8 @@ function App() {
                     <tr>
                       <th style={estilos.th}>ID</th>
                       <th style={estilos.th}>Nome</th>
+                      <th style={estilos.th}>Categoria</th>
+                      <th style={estilos.th}>preco</th>
                       <th style={{ ...estilos.th, textAlign: 'right' }}>Ações</th>
                     </tr>
                   </thead>
