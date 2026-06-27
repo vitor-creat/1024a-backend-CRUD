@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+
 interface Pessoa {
   id: number;
   nome: string;
@@ -9,7 +10,7 @@ interface Produtos{
   id:number
   nome: string
   categoria: string
-  preco: number
+  preco: number | number
 }
 
 
@@ -34,7 +35,9 @@ function App() {
   const [produtos, setProdutos] = useState<Produtos[]>([]);
   
   const [categoria, setCategoria] = useState('')
-  const [preco, setPreco] = useState('')
+  const [categoriaEditado, setcategoriaEditado] = useState('');
+  const [preco, setPreco] = useState<string | number>()
+  const [precoEditado, setprecoEditado] = useState('');
 
   useEffect(() => {
     async function carregarPessoas() {
@@ -257,6 +260,8 @@ function App() {
 
       setNovoId('');
       setNovoNome('');
+      setCategoria('');
+      setPreco('');
       await recarregarProduto();
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -334,6 +339,25 @@ function App() {
   function cancelarEdicao() {
     setEditandoId(null);
     setNomeEditado('');
+  }
+
+  function iniciarEdicaoProduto(
+    id: number, 
+    nome: string, 
+    categoria: string, 
+    preco: number
+  ) {
+    setEditandoId(id);
+    setNomeEditado(nome);
+    setcategoriaEditado(categoria);
+    setprecoEditado(String(preco))
+  }
+
+  function cancelarEdicaoProduto() {
+    setEditandoId(null);
+    setNomeEditado('');
+    setcategoriaEditado('');
+    setprecoEditado('')
   }
 
 
@@ -922,13 +946,13 @@ function App() {
                   <tbody>
                     {carregando ? (
                       <tr>
-                        <td colSpan={3} style={estilos.td}>
+                        <td colSpan={5} style={estilos.td}>
                           Carregando...
                         </td>
                       </tr>
                     ) : produtos.length === 0 ? (
                       <tr>
-                        <td colSpan={3} style={estilos.vazio}>
+                        <td colSpan={5} style={estilos.vazio}>
                           Nenhum produto encontrado.
                         </td>
                       </tr>
@@ -945,12 +969,47 @@ function App() {
                                 onChange={(e) => setNomeEditado(e.target.value)}
                                 style={estilos.inputEdicao}
                               />
+
                             ) : (
                               <div style={estilos.avatarLinha}>
                                 <div style={estilos.avatar}>
                                   {gerarIniciais(produto.nome)}
                                 </div>
                                 <span>{produto.nome}</span>
+                              </div>
+                            )}
+                          </td>
+
+
+                          <td style={estilos.td}>
+                            {editandoId === produto.id ? (
+                              <input
+                                type="text"
+                                value={categoriaEditado}
+                                onChange={(e) => setcategoriaEditado(e.target.value)}
+                                style={estilos.inputEdicao}
+                              />
+
+                            ) : (
+                              <div style={estilos.avatarLinha}>
+                                <span>{produto.categoria}</span>
+                              </div>
+                            )}
+                          </td>
+
+
+                          <td style={estilos.td}>
+                            {editandoId === produto.id ? (
+                              <input
+                                type="text"
+                                value={precoEditado}
+                                onChange={(e) => setprecoEditado(e.target.value)}
+                                style={estilos.inputEdicao}
+                              />
+
+                            ) : (
+                              <div style={estilos.avatarLinha}>
+                                <span>{produto.preco}</span>
                               </div>
                             )}
                           </td>
@@ -968,7 +1027,7 @@ function App() {
 
                                   <button
                                     style={estilos.botaoSecundario}
-                                    onClick={cancelarEdicao}
+                                    onClick={cancelarEdicaoProduto}
                                   >
                                     Cancelar
                                   </button>
@@ -978,7 +1037,12 @@ function App() {
                                   <button
                                     style={estilos.botaoSecundario}
                                     onClick={() =>
-                                      iniciarEdicao(produto.id, produto.nome)
+                                      iniciarEdicaoProduto(
+                                        produto.id, 
+                                        produto.nome, 
+                                        produto.categoria, 
+                                        produto.preco
+                                      )
                                     }
                                   >
                                     Editar
